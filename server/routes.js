@@ -19,6 +19,8 @@ module.exports = (app, express) => {
 	// the corsOptions should work with http://127.0.0.1 given the regex 
 	app.get('/typeahead', cors(corsOptions), utils.typeahead);
 
+	app.get('/resolver', cors(corsOptions), utils.resolver);
+
 	// let's not get this one setup yet. 
 	// app.get('/resolver')
 };
