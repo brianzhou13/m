@@ -1,6 +1,8 @@
-var sync = require('synchronize');
 var request = require('request');
-// var axios = require('axios');
+var Bluebird = require('bluebird');
+var axios = require('axios');
+// var sync = require('synchronize');
+
 
 module.exports = {
 	typeahead: (req, res) => {
@@ -16,20 +18,66 @@ module.exports = {
 		  return;
 		}
 
-		// need to make a post-req
-		try {
-			response = sync.await(request({
-				url: 'http://127.0.0.1:1337/api/scrape/google/mixmax',
-				method: 'POST',
-				// http://127.0.0.1:1337/api/scrape/google/mixmax
-				json: true,
-			}, sync.defer()));
 
-			console.log(`value for response is: ${response}`);
-		} catch (e) {
-			res.status(500).send('Error');
+		var response;
+
+		var response = new Bluebird((resolve, reject) => {
+			var result = axios.post(`http://127.0.0.1:1337/api/scrape/google/mixmax`, {
+				query: term
+			})
+				.then((entries) => {
+					resolve(entries);
+				})
+				.catch((err) => {
+					console.log(`error retrieving results-- err: ${err}`);
+					reject(err);
+				});
+		})
+		.then((entries) => {
+			console.log(`keys for entries received: ${Object.keys(entries)}`);
+			console.log(`value for entries is: ${entries.data}`)
+			var results = entries.data.map((item) => {
+				return {
+					title: '<p>' + item.meta + '</p>',
+					text: item.url
+				};
+			});
+
+			res.json(results);
 			return;
-		}
+		})
+		.catch((err) => {
+			console.log(`error in retrieving entries: ${err}`);
+		});
+
+		// var results = _.chain(response.body.data) // chains methods until .value is called
+  //   .reject(function(result) {  // returns all items within a collection that fail a predicate
+  //     return !result || !result. || !image.images.fixed_height_small; // all items that fail this are returned
+  //   })
+  //   .map(function(image) {
+  //     return {
+  //       title: '<img style="height:75px" src="' + image.images.fixed_height_small.url + '">',
+  //       text: 'http://giphy.com/' + image.id
+  //     };
+  //   })
+  //   .value(); // ends the _.chain
+
+
+		// need to make a post-req
+		// try {
+		// 	response = sync.await(request({
+		// 		url: 'http://127.0.0.1:1337/api/scrape/google/mixmax',
+		// 		method: 'POST',
+		// 		// http://127.0.0.1:1337/api/scrape/google/mixmax
+		// 		json: true,
+		// 		timeout: 10 * 1000
+		// 	}, sync.defer()));
+		// 	console.log(`value for response is: ${response}`);
+		// } catch (e) {
+		// 	console.log(`error received is: ${e}`);
+		// 	res.status(500).send('Error');
+		// 	return;
+		// }
 
 
 	}
