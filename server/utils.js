@@ -1,12 +1,17 @@
-var request = require('request');
 var Bluebird = require('bluebird');
 var axios = require('axios');
+// var request = require('request');
 // var sync = require('synchronize');
 
 
 module.exports = {
+	/*
+	 * @name: typeahead
+	 * @input: the req and res values
+	 * @output: an json obj with a `title` and `text` property that contains html of what's to be inserted when user types
+	 * @notes: n/a
+	 */
 	typeahead: (req, res) => {
-		// pulled from mixmax's github repo for initial start (?)
 		var term = req.query.text.trim(); 
 		if (!term) {
 		  res.json([{ 
@@ -21,7 +26,6 @@ module.exports = {
 					query: term
 				})
 				.then((entries) => {
-					//entries are resolved here
 					resolve(entries.data);
 				})
 				.catch((err) => {
@@ -30,11 +34,10 @@ module.exports = {
 				});
 		})
 		.then((entries) => {
-			// console.log(`keys for entries received: ${Object.keys(entries)}`);
 			var results = entries.map((item) => {
-				return { // we can do some in-line styling for this too...
+				return {
 					title: `<p> <p>Position ${item.position}:</p><p>url: ${item.url}</p><p>${item.meta}</p></p>`, // placed inside a '<li> tag'
-					text: item._id.toString() + ':' + item.query// this is entered into the data-params value in the html, and the datat sent to resolver
+					text: item.position.toString() + ':' + item.query// this is entered into the data-params value in the html, and the datat sent to resolver
 				};
 			});
 
@@ -46,10 +49,16 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * @name: resovler
+	 * @input: the req and res values
+	 * @output: an json obj with a `body` property that contains html of what's to be inserted
+	 * @notes: - code isn't 100% DRY as parts were directly copied from above -- a future clean-up.
+	 * 	       - also we'd need to look into how to add styling 
+	 */
 	resolver: (req, res) => {
-		// console.log(`resolver value received is: ${req.query.text.trim()}`);// input is a query
 		var queries = req.query.text.trim().split(':');
-		var term_id = queries[0];
+		var term_position = queries[0];
 		var term = queries[1];
 
 		// majority parts copied from above... not really DRY
@@ -69,12 +78,10 @@ module.exports = {
 		.then((items) => {
 			// console.log(`value for item received is: ${item}`); // undefined
 			var result = items.filter((item) => {
-				return item._id === term_id;
+				return item.position === parseInt(term_position);
 			});
-			
-			var result = result[0];
 
-			// var result = result
+			var result = result[0];
 			res.json({
 				body: `<p><p>Position ${result.position}:</p> <p>url: ${result.url}</p><p>${result.meta}</p></p>`
 			});

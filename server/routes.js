@@ -1,12 +1,5 @@
 var cors = require('cors');
 var utils = require('./utils');
-// need to try cors
-
-// regex found here: http://stackoverflow.com/questions/8426171/what-regex-will-match-all-loopback-addresses
-// const corsOptions = {
-// 	origin: /^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*\:)*?:?0*1$/,
-// 	credentials: true
-// };
 
 var corsOptions = {
   origin: /^[^.\s]+\.mixmax\.com$/, //accepts calls from mixmax
@@ -15,12 +8,22 @@ var corsOptions = {
 
 
 module.exports = (app, express) => {
-	
-	// the corsOptions should work with http://127.0.0.1 given the regex 
+
+	/*
+	 * @route name: /typeahead
+	 * @input: user input attached as a query string parameter
+	 * @output: an json obj with a `title` and `text` property that contains html of what's to be inserted when user types
+	 * @notes: n/a
+	 */
 	app.get('/typeahead', cors(corsOptions), utils.typeahead);
 
-	app.get('/resolver', cors(corsOptions), utils.resolver);
-
-	// let's not get this one setup yet. 
-	// app.get('/resolver')
+	/*
+	 * @name: /resovler
+	 * @input: user's selection of the choices displayed from list generated from the /typeahead route
+	 * @output: an json obj with a `body` property that contains html of what's to be inserted
+	 * @notes: - code isn't 100% DRY as parts were directly copied from above -- a future clean-up.
+	 * 	       - also we'd need to look into how to add styling 
+	 */
+	app.get('/resolver', utils.resolver);
+	
 };
