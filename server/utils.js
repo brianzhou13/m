@@ -26,7 +26,9 @@ module.exports = {
 				query: term
 			})
 				.then((entries) => {
-					resolve(entries);
+					//entries are resolved here
+					console.log(`value for json.parse: ${JSON.parse(entries.data)}`);
+					resolve(JSON.parse(entries.data));
 				})
 				.catch((err) => {
 					console.log(`error retrieving results-- err: ${err}`);
@@ -34,12 +36,12 @@ module.exports = {
 				});
 		})
 		.then((entries) => {
-			console.log(`keys for entries received: ${Object.keys(entries)}`);
-			console.log(`value for entries is: ${entries.data}`)
-			var results = entries.data.map((item) => {
-				return {
-					title: '<p>' + item.meta + '</p>',
-					text: item.url
+			// console.log(`keys for entries received: ${Object.keys(entries)}`);
+			console.log(`value for entries is: ${entries}`)
+			var results = entries.map((item) => {
+				return { // we can do some in-line styling for this too...
+					title: `<p> <p>Position ${item.position}:</p><p>url: ${item.url}</p><p>${item.meta}</p></p>`, // placed inside a '<li> tag'
+					text: item.url // this is entered into the data-params value in the html
 				};
 			});
 
