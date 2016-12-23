@@ -24,6 +24,6 @@ module.exports = (app, express) => {
 	 * @notes: - code isn't 100% DRY as parts were directly copied from above -- a future clean-up.
 	 * 	       - also we'd need to look into how to add styling 
 	 */
-	app.get('/resolver', utils.resolver);
-	
+	app.get('/resolver', cors(corsOptions), utils.resolver);
+
 };
