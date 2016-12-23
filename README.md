@@ -4,7 +4,7 @@
 A custom slash command integration.
 
 * See it live here: 
-	** Reason for this is because I made requests to an API that I'm building for one of my own projects, and it's not yet deployed. https://www.youtube.com/watch?v=KuwbRW-VrR8
+	** Reason for this is because I made requests to an API that I'm building for one of my own projects, and it's not yet deployed. https://www.youtube.com/watch?v=-KOa3QwPsgo
 
 
 ## How it works?

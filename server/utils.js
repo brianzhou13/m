@@ -37,6 +37,7 @@ module.exports = {
 			var results = entries.map((item) => {
 				return {
 					title: `<p> <p>Position ${item.position}:</p><p>url: ${item.url}</p><p>${item.meta}</p></p>`, // placed inside a '<li> tag'
+					// title: `<span>position: ${item.position} | url: <a href=${result.url}>${result.url}</a> | meta: ${result.meta}</span>`,
 					text: item.position.toString() + ':' + item.query// this is entered into the data-params value in the html, and the datat sent to resolver
 				};
 			});
@@ -83,7 +84,27 @@ module.exports = {
 
 			var result = result[0];
 			res.json({
-				body: `<p><p>Position ${result.position}:</p> <p>url: ${result.url}</p><p>${result.meta}</p></p>`
+				body: `<div>
+								<style>
+									.result-text { 
+									font-family: Helvetica;
+									font-size: 14px;
+									font-weight: 100; }
+
+									.bar {
+										font-size: 15px;
+										font-weight: 10;
+										color: #ff7e82;
+										opacity: 0.8;
+									}
+
+									.type {
+										font-weight: 400;
+									}
+								</style>
+								<span class='result-text'><span class='type'>position</span>: ${result.position} <span class='bar'>|</span> <span class='type'>url</span>: 
+								<a href=${result.url}>${result.url}</a> <span class='bar'>|</span> <span class='type'>meta</span>: ${result.meta}</span>
+							</div>`
 			});
 		})
 		.catch((err) => {
